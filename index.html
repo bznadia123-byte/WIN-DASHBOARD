@@ -675,7 +675,7 @@ const PALETTE = ['#f2c383','#8ecdb7','#9fb8e8','#e8a0a0','#c9b8e8','#8fd8d2','#e
 // 3) Paste the Client ID below.
 // 4) Make sure the underlying Google Sheet is shared only with the specific
 //    people/group who should see this data (NOT "Anyone with the link").
-const GOOGLE_CLIENT_ID = '376938320238-8rbh0l4kh1lvd7bv1v8lag5rmfoltjeq.apps.googleusercontent.com';
+const GOOGLE_CLIENT_ID = 'PASTE_YOUR_OAUTH_CLIENT_ID_HERE.apps.googleusercontent.com';
 const SHEETS_SCOPE = 'https://www.googleapis.com/auth/spreadsheets.readonly';
 let ACCESS_TOKEN = null;
 let TOKEN_EXPIRES_AT = 0;
@@ -1472,6 +1472,13 @@ async function fetchRangeTable(sheetName, range){
   const dataRows = padded.slice(1);
   return { header, rows: dataRows };
 }
+function colWidthStyle(headerText){
+  const h = (headerText||'').toString().trim().toLowerCase();
+  if(h.includes('nama sales') || h.includes('sales name') || h === 'sales'){
+    return 'width:115px; max-width:115px; white-space:normal; word-break:break-word;';
+  }
+  return '';
+}
 function renderRangeTable(tbodyId, table, colAlign){
   const el = document.getElementById(tbodyId);
   const header = (table && table.header) || [];
@@ -1479,11 +1486,12 @@ function renderRangeTable(tbodyId, table, colAlign){
   const hasHeader = header.some(h => h.trim() !== '');
   if(!rows.length && !hasHeader){ el.innerHTML = '<tr class="empty-row"><td>No data available</td></tr>'; return; }
   const alignFor = (i) => (colAlign && colAlign[i]) ? `text-align:${colAlign[i]};` : '';
+  const widthFor = (i) => colWidthStyle(header[i]);
   let html = '';
   if(hasHeader){
-    html += '<tr>' + header.map((h,i)=>`<th style="position:sticky; top:0; background:var(--card2); text-align:left; padding:12px 14px; font-size:11px; text-transform:uppercase; letter-spacing:0.4px; color:var(--text-dim); border-bottom:1px solid var(--border); white-space:nowrap; ${alignFor(i)}">${escapeHtml(h)}</th>`).join('') + '</tr>';
+    html += '<tr>' + header.map((h,i)=>`<th style="position:sticky; top:0; background:var(--card2); text-align:left; padding:12px 14px; font-size:11px; text-transform:uppercase; letter-spacing:0.4px; color:var(--text-dim); border-bottom:1px solid var(--border); white-space:nowrap; ${alignFor(i)} ${widthFor(i)}">${escapeHtml(h)}</th>`).join('') + '</tr>';
   }
-  html += rows.map(r => '<tr>' + r.map((c,i)=>`<td style="${alignFor(i)}">${escapeHtml(c)}</td>`).join('') + '</tr>').join('');
+  html += rows.map(r => '<tr>' + r.map((c,i)=>`<td style="${alignFor(i)} ${widthFor(i)}">${escapeHtml(c)}</td>`).join('') + '</tr>').join('');
   el.innerHTML = html;
 }
 function populateFeeMonthFilter(table){
