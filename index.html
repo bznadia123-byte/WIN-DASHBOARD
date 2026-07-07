@@ -283,11 +283,12 @@
   #arTable{ width:100% !important; min-width:0 !important; }
   #fmTable{ width:auto !important; min-width:0 !important; }
   #fmTable th, #fmTable td{ padding-right:22px; }
-  #feeTable{ width:100% !important; min-width:0 !important; }
+  #feeTable{ width:100% !important; min-width:0 !important; table-layout:fixed; }
   #pajakTable{ width:100% !important; min-width:0 !important; }
   #feeTable th{ position:sticky; top:0; background:var(--card2); z-index:2; }
-  #feeTable th, #feeTable td{ padding-right:22px; }
-  #feeTable th:first-child, #feeTable td:first-child{ min-width:90px; white-space:nowrap; padding-right:26px; }
+  #feeTable td{ white-space:normal; word-break:break-word; }
+  #feeTable th, #feeTable td{ padding-right:12px; }
+  #feeTable th:first-child, #feeTable td:first-child{ min-width:70px; padding-right:16px; }
   #arTable th, #arTable td{ padding-right:28px; }
   .due-badge.due-telat{ background:#ffe066; color:#c0202f; }
   .due-badge.due-telat.due-blink{ animation: dueBlink 1s infinite; }
@@ -626,7 +627,7 @@
     <ol>
       <li>Ask the sheet owner to share it with your Google account (Viewer access is enough) — no need for "Anyone with the link" anymore.</li>
       <li>Open the tab containing transaction data (Total COGS, Total Selling, Margin, Profit, etc.).</li>
-      <li>Copy the URL from the address bar and  it below.</li>
+      <li>Copy the URL from the address bar and paste it below.</li>
     </ol>
     <div class="connect-row">
       <input type="text" id="sheetUrlInput" placeholder="https://docs.google.com/spreadsheets/d/...../edit#gid=0">
@@ -675,7 +676,7 @@ const PALETTE = ['#f2c383','#8ecdb7','#9fb8e8','#e8a0a0','#c9b8e8','#8fd8d2','#e
 // 3) Paste the Client ID below.
 // 4) Make sure the underlying Google Sheet is shared only with the specific
 //    people/group who should see this data (NOT "Anyone with the link").
-const GOOGLE_CLIENT_ID = '376938320238-8rbh0l4kh1lvd7bv1v8lag5rmfoltjeq.apps.googleusercontent.com';
+const GOOGLE_CLIENT_ID = 'PASTE_YOUR_OAUTH_CLIENT_ID_HERE.apps.googleusercontent.com';
 const SHEETS_SCOPE = 'https://www.googleapis.com/auth/spreadsheets.readonly';
 let ACCESS_TOKEN = null;
 let TOKEN_EXPIRES_AT = 0;
@@ -1475,7 +1476,7 @@ async function fetchRangeTable(sheetName, range){
 function colWidthStyle(headerText){
   const h = (headerText||'').toString().trim().toLowerCase();
   if(h.includes('nama sales') || h.includes('sales name') || h === 'sales'){
-    return 'width:115px; max-width:115px; white-space:normal; word-break:break-word;';
+    return 'width:85px; max-width:85px; white-space:normal; word-break:break-word;';
   }
   return '';
 }
@@ -1489,7 +1490,7 @@ function renderRangeTable(tbodyId, table, colAlign){
   const widthFor = (i) => colWidthStyle(header[i]);
   let html = '';
   if(hasHeader){
-    html += '<tr>' + header.map((h,i)=>`<th style="position:sticky; top:0; background:var(--card2); text-align:left; padding:12px 14px; font-size:11px; text-transform:uppercase; letter-spacing:0.4px; color:var(--text-dim); border-bottom:1px solid var(--border); white-space:nowrap; ${alignFor(i)} ${widthFor(i)}">${escapeHtml(h)}</th>`).join('') + '</tr>';
+    html += '<tr>' + header.map((h,i)=>`<th style="position:sticky; top:0; background:var(--card2); text-align:left; padding:12px 14px; font-size:11px; text-transform:uppercase; letter-spacing:0.4px; color:var(--text-dim); border-bottom:1px solid var(--border); ${alignFor(i)} ${widthFor(i)}">${escapeHtml(h)}</th>`).join('') + '</tr>';
   }
   html += rows.map(r => '<tr>' + r.map((c,i)=>`<td style="${alignFor(i)} ${widthFor(i)}">${escapeHtml(c)}</td>`).join('') + '</tr>').join('');
   el.innerHTML = html;
